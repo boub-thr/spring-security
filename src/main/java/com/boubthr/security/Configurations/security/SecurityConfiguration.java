@@ -12,8 +12,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
-import static com.boubthr.security.Configurations.security.UserRole.ADMIN;
-import static com.boubthr.security.Configurations.security.UserRole.STUDENT;
+import static com.boubthr.security.Configurations.security.UserRole.*;
 
 @Configuration
 @EnableWebSecurity
@@ -28,7 +27,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests()
+        http
+                .csrf().disable()//details of this in next section
+                .authorizeRequests()
                 .antMatchers("/","index","/css/*","/js/*")
                 .permitAll()
                 .antMatchers("/api/**").hasRole(STUDENT.name())
@@ -51,6 +52,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .password(passwordEncoder.encode("admin@123"))
                 .roles(ADMIN.name())
                 .build();
-        return new InMemoryUserDetailsManager(aUser, admin);
+        UserDetails trainee = User.builder()
+                .username("trainee")
+                .password(passwordEncoder.encode("trainee@123"))
+                .roles(ADMIN_TRAINEE.name())
+                .build();
+        return new InMemoryUserDetailsManager(aUser, admin, trainee);
     }
 }
