@@ -34,9 +34,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/","index","/css/*","/js/*")
                 .permitAll()
                 .antMatchers("/api/**").hasRole(STUDENT.name())
-                .antMatchers(HttpMethod.DELETE,"/management/api/**").hasAuthority(UserPermission.COURSE_WRITE.name())
-                .antMatchers(HttpMethod.POST,"/management/api/**").hasAuthority(UserPermission.COURSE_WRITE.name())
-                .antMatchers(HttpMethod.PUT,"/management/api/**").hasAuthority(UserPermission.COURSE_WRITE.name())
+                .antMatchers(HttpMethod.DELETE,"/management/api/**").hasAuthority(UserPermission.COURSE_WRITE.getPermission())
+                .antMatchers(HttpMethod.POST,"/management/api/**").hasAuthority(UserPermission.COURSE_WRITE.getPermission())
+                .antMatchers(HttpMethod.PUT,"/management/api/**").hasAuthority(UserPermission.COURSE_WRITE.getPermission())
                 .antMatchers(HttpMethod.GET,"/management/api/vi/students").hasAnyRole(ADMIN.name(),ADMIN_TRAINEE.name())
                 .anyRequest()
                 .authenticated()
@@ -63,7 +63,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .username("trainee")
                 .password(passwordEncoder.encode("trainee@123"))
                 //.roles(ADMIN_TRAINEE.name()) // => ROLE_ADMIN_TRAINEE
-                .authorities(ADMIN_TRAINEE.getGrantedAuthority())
+                .authorities(ADMIN_TRAINEE.getGrantedAuthority() )
                 .build();
         return new InMemoryUserDetailsManager(aUser, admin, trainee);
     }
