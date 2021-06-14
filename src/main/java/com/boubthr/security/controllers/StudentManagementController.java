@@ -1,6 +1,7 @@
 package com.boubthr.security.controllers;
 
 import com.boubthr.security.entities.Student;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -18,21 +19,25 @@ public class StudentManagementController {
     ));
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_ADMIN_TRAINEE')")
     public  List<Student> getAllStudents(){
         return students ;
     }
 
     @GetMapping("/{idStudent}")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_ADMIN_TRAINEE')")
     public Student getStudent(@PathVariable  Long idStudent){
         return extractStudent(idStudent);
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('student:write')")
     public void registerNewStudent(@RequestBody  Student student){
         students.add(student);
     }
 
     @PutMapping()
+    @PreAuthorize("hasAuthority('student:write')")
     public void updateStudent(@RequestBody Student student){
         Student studentToUpdate = extractStudent(student.getId());
         int indexOfStudentToUpdate = students.indexOf(studentToUpdate);
@@ -41,6 +46,7 @@ public class StudentManagementController {
     }
 
     @DeleteMapping("/{idStudent}")
+    @PreAuthorize("hasAuthority('student:write')")
     public void deleteStudent(@PathVariable Long idStudent){
         Student student = extractStudent(idStudent);
         students.remove(student);
